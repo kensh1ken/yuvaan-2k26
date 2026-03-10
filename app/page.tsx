@@ -107,6 +107,7 @@ const SCHEDULE_DATES: Record<ScheduleDay, string> = {
   day1: "2026-03-14",
   day2: "2026-03-15",
 };
+const MERCH_TAB_HREF = "#";
 
 const IST_DATE_TIME_FORMATTER = new Intl.DateTimeFormat("en-CA", {
   timeZone: "Asia/Kolkata",
@@ -197,17 +198,36 @@ export default function Page() {
         </div>
       </section>
 
-      <section id="about" className="section about">
+      <section id="merch" className="section merch home-merch">
         <div className="section-inner reveal">
-          <h2 className="section-title">When the abyss whispers... you listen.</h2>
-          <p className="section-text">
-            YUVAAN - Whispers of the Abyss is a cultural and technical festival that blurs the line
-            between spectacle and story. Over two nights and two days, the campus transforms into a
-            living mystery - from high-stakes competitions and immersive games to performances that
-            pull you into the dark and refuse to let go. This is not just a fest. It is an
-            experience, a descent into a world where curiosity is your only compass and thrill is
-            your only constant.
-          </p>
+          <a
+            href={MERCH_TAB_HREF}
+            className="events-nav-tab merch-nav-tab"
+            aria-label="Open merch link"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span className="events-nav-tab-label">🛒Buy-Explore the Phantom Market</span>
+            <span className="events-nav-tab-arrow" aria-hidden="true">
+              &rarr;
+            </span>
+          </a>
+          <div className="merch-grid">
+            <article className="merch-card">
+              <img
+                src="/assets/merch/Gemini_Generated_Image_82t1nh82t1nh82t1.png"
+                alt="YUVAAN merch concept art"
+                className="merch-image"
+              />
+            </article>
+            <article className="merch-card">
+              <img
+                src="/assets/merch/WhatsApp%20Image%202026-02-09%20at%208.32.56%20PM.jpeg"
+                alt="YUVAAN merch sample photo"
+                className="merch-image"
+              />
+            </article>
+          </div>
         </div>
       </section>
 
