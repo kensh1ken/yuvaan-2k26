@@ -23,8 +23,9 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <img src="/assets/logo/instagram.png" alt="Instagram" width={16} height={16} />
-
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M7.8 3h8.4C19 3 21 5 21 7.8v8.4c0 2.8-2 4.8-4.8 4.8H7.8C5 21 3 19 3 16.2V7.8C3 5 5 3 7.8 3zm-.2 2C6.2 5 5 6.2 5 7.6v8.8C5 17.8 6.2 19 7.6 19h8.8c1.4 0 2.6-1.2 2.6-2.6V7.6C19 6.2 17.8 5 16.4 5H7.6zm9.3 1.5a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2zM12 7.8a4.2 4.2 0 1 1 0 8.4 4.2 4.2 0 0 1 0-8.4zm0 2a2.2 2.2 0 1 0 0 4.4 2.2 2.2 0 0 0 0-4.4z"></path>
+              </svg>
             </a>
             <a href="#" aria-label="Facebook" className="social-icon">
               <svg viewBox="0 0 24 24" aria-hidden="true">
