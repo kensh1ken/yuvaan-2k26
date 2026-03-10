@@ -1,72 +1,147 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import Galaxy from "./components/Galaxy";
-
-type EventItem = {
-  id: string;
-  title: string;
-  description: string;
-  posterClass: string;
-  posterSrc: string;
-  posterAlt: string;
-  tag: string;
-};
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import GhostCursor from "./components/GhostCursor";
 
 type ScheduleDay = "day1" | "day2";
+type ScheduleItem = {
+  timeLabel: string;
+  start: string;
+  end: string;
+  name: string;
+  meta: string;
+};
+type IstDateParts = {
+  year: number;
+  month: number;
+  day: number;
+  hour: number;
+  minute: number;
+};
 
-const EVENTS: EventItem[] = [
-  {
-    id: "treasure",
-    title: "Treasure Hunt",
-    description:
-      "The whispers have begun... Hidden clues, twisted paths, and a treasure waiting in the shadows. This is not just a game, it is a test of wit, speed, and instinct.",
-    posterClass: "poster-red-gold",
-    posterSrc: "/assets/posters/treasure.png",
-    posterAlt: "Treasure Hunt poster",
-    tag: "Deep Red â€¢ Gold",
-  },
-  {
-    id: "speed",
-    title: "Speed Dating",
-    description:
-      "Some conversations last forever... Some only need a few minutes to change everything. Take a seat, start the clock, and see where it goes.",
-    posterClass: "poster-pink-purple",
-    posterSrc: "/assets/posters/speeddating.png",
-    posterAlt: "Speed Dating poster",
-    tag: "Neon Pink â€¢ Purple",
-  },
-  {
-    id: "mockcid",
-    title: "Mock CID",
-    description:
-      "A mystery waits in the shadows... Clues scattered, truths hidden, and suspects everywhere. Connect the dots and uncover what others cannot see.",
-    posterClass: "poster-noir",
-    posterSrc: "/assets/posters/mockcid.png",
-    posterAlt: "Mock CID poster",
-    tag: "Noir Red â€¢ Dark Brown",
-  },
-  {
-    id: "pageant",
-    title: "Mr & Mrs Yuvaan",
-    description:
-      "Confidence is not just seen, it is felt. Grace is not just shown, it is carried. Step forward and let your personality speak louder than words.",
-    posterClass: "poster-emerald",
-    posterSrc: "/assets/posters/mrandmrs.png",
-    posterAlt: "Mr & Mrs Yuvaan poster",
-    tag: "Emerald Green",
-  },
-];
+const SCHEDULE: Record<ScheduleDay, ScheduleItem[]> = {
+  day1: [
+    {
+      timeLabel: "09:30-10:00",
+      start: "09:30",
+      end: "10:00",
+      name: "Inauguration",
+      meta: "YUVAAN Stage",
+    },
+    {
+      timeLabel: "10:00-11:00",
+      start: "10:00",
+      end: "11:00",
+      name: "Treasure Hunt R1",
+      meta: "Full Campus",
+    },
+    {
+      timeLabel: "13:30-16:00",
+      start: "13:30",
+      end: "16:00",
+      name: "Mock CID R1, R2",
+      meta: "Location TBD",
+    },
+    {
+      timeLabel: "16:00-20:00",
+      start: "16:00",
+      end: "20:00",
+      name: "Dance / Singing",
+      meta: "YUVAAN Stage",
+    },
+    {
+      timeLabel: "20:00-22:00",
+      start: "20:00",
+      end: "22:00",
+      name: "Cultural Night",
+      meta: "YUVAAN Stage",
+    },
+  ],
+  day2: [
+    {
+      timeLabel: "10:00-12:00",
+      start: "10:00",
+      end: "12:00",
+      name: "Treasure Hunt R2",
+      meta: "Ground",
+    },
+    {
+      timeLabel: "14:30-15:30",
+      start: "14:30",
+      end: "15:30",
+      name: "Mock CID R3",
+      meta: "YUVAAN Stage",
+    },
+    {
+      timeLabel: "14:30-16:30",
+      start: "14:30",
+      end: "16:30",
+      name: "Talk Tangle",
+      meta: "Town Hall",
+    },
+    {
+      timeLabel: "16:00-18:00",
+      start: "16:00",
+      end: "18:00",
+      name: "Dance Battle",
+      meta: "Town Hall",
+    },
+    {
+      timeLabel: "18:30-20:30",
+      start: "18:30",
+      end: "20:30",
+      name: "Ms. & Mr. Yuvaan",
+      meta: "YUVAAN Stage",
+    },
+    {
+      timeLabel: "20:30-22:00",
+      start: "20:30",
+      end: "22:00",
+      name: "PRONITE - Main Artist",
+      meta: "YUVAAN Stage",
+    },
+  ],
+};
+const SCHEDULE_DATES: Record<ScheduleDay, string> = {
+  day1: "2026-03-14",
+  day2: "2026-03-15",
+};
+
+const IST_DATE_TIME_FORMATTER = new Intl.DateTimeFormat("en-CA", {
+  timeZone: "Asia/Kolkata",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: false,
+});
+
+const toMinutes = (time: string) => {
+  const [hours, minutes] = time.split(":").map(Number);
+  return hours * 60 + minutes;
+};
+
+const getIstDateParts = (date: Date): IstDateParts => {
+  const parts = IST_DATE_TIME_FORMATTER.formatToParts(date);
+  const getPart = (type: "year" | "month" | "day" | "hour" | "minute") =>
+    Number(parts.find((part) => part.type === type)?.value ?? "0");
+
+  return {
+    year: getPart("year"),
+    month: getPart("month"),
+    day: getPart("day"),
+    hour: getPart("hour"),
+    minute: getPart("minute"),
+  };
+};
 
 export default function Page() {
-  const [navOpen, setNavOpen] = useState(false);
   const [activeDay, setActiveDay] = useState<ScheduleDay>("day1");
-  const [modalEvent, setModalEvent] = useState<{ title: string; description: string } | null>(
-    null,
-  );
+  const [nowTimestamp, setNowTimestamp] = useState(() => Date.now());
 
-  const year = useMemo(() => new Date().getFullYear(), []);
-
+  
   useEffect(() => {
     const revealElements = document.querySelectorAll<HTMLElement>(".reveal");
     const observer = new IntersectionObserver(
@@ -87,101 +162,27 @@ export default function Page() {
   }, []);
 
   useEffect(() => {
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setModalEvent(null);
-      }
-    };
+    const timer = window.setInterval(() => {
+      setNowTimestamp(Date.now());
+    }, 30000);
 
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
+    return () => window.clearInterval(timer);
   }, []);
 
-  useEffect(() => {
-    document.body.style.overflow = modalEvent ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [modalEvent]);
-
-  const closeNav = () => setNavOpen(false);
-
-  const scrollToEvents = () => {
-    document.getElementById("events")?.scrollIntoView({ behavior: "smooth" });
-  };
+  const istNow = getIstDateParts(new Date(nowTimestamp));
+  const currentIstDate = `${istNow.year}-${String(istNow.month).padStart(2, "0")}-${String(
+    istNow.day,
+  ).padStart(2, "0")}`;
+  const nowIstMinutes = istNow.hour * 60 + istNow.minute;
 
   return (
-    <>
-      <header className="navbar">
-        <div className="nav-inner">
-          <a href="#hero" className="nav-logo" onClick={closeNav}>
-            <img
-              src="/assets/logo/logo.png"
-              alt="YUVAAN - Whispers of the Abyss"
-              className="logo-image"
-            />
-          </a>
-          <nav className={`nav-links${navOpen ? " open" : ""}`} id="nav-links">
-            <a href="#hero" className="nav-link" onClick={closeNav}>
-              Home
-            </a>
-            <a href="#about" className="nav-link" onClick={closeNav}>
-              About
-            </a>
-            <a href="#events" className="nav-link" onClick={closeNav}>
-              Events
-            </a>
-            <a href="#schedule" className="nav-link" onClick={closeNav}>
-              Schedule
-            </a>
-            <a href="#team" className="nav-link" onClick={closeNav}>
-              Team
-            </a>
-            <a href="#sponsors" className="nav-link" onClick={closeNav}>
-              Sponsors
-            </a>
-            <a
-              href="https://mun.yuvaan-placeholder.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="nav-link"
-            >
-              MUN
-            </a>
-            <a href="#contact" className="nav-link" onClick={closeNav}>
-              Contact
-            </a>
-          </nav>
-          <button
-            className={`nav-toggle${navOpen ? " active" : ""}`}
-            id="nav-toggle"
-            aria-label="Toggle navigation"
-            onClick={() => setNavOpen((prev) => !prev)}
-          >
-            <span></span>
-            <span></span>
-            <span></span>
-          </button>
-        </div>
-      </header>
-
+    <div className="page-home">
+      <video className="home-video-bg" autoPlay muted loop playsInline>
+        <source src="/assets/background/Infinite_Warp_Video_Generation.mp4" type="video/mp4" />
+      </video>
       <section id="hero" className="hero section">
-        <div className="hero-galaxy-layer" aria-hidden="true">
-          <Galaxy
-            mouseRepulsion
-            mouseInteraction
-            density={0.7}
-            glowIntensity={0.2}
-            saturation={0}
-            hueShift={140}
-            twinkleIntensity={0.2}
-            rotationSpeed={0.06}
-            repulsionStrength={1.4}
-            autoCenterRepulsion={0}
-            starSpeed={0.35}
-            speed={0.75}
-            transparent
-          />
+        <div className="hero-ghost-layer" aria-hidden="true">
+          <GhostCursor />
         </div>
         <div className="hero-overlay"></div>
         <div className="hero-content reveal pirata-one-regular">
@@ -192,16 +193,7 @@ export default function Page() {
               className="hero-logo-image"
             />
           </div>
-          <p className="hero-tagline">Between fear and fascination lies the abyss.</p>
-          <p className="hero-subtext">
-            This March, Yuvaan invites you to walk the edge, chase the thrill, and answer the call
-            that rises from the dark.
-          </p>
-          <p className="hero-dates">14-15 March</p>
-          <button className="btn-primary" id="enter-abyss-btn" onClick={scrollToEvents}>
-            Enter the Abyss
-            <span className="btn-glow"></span>
-          </button>
+          <div className="hero-dates-slot" aria-hidden="true"></div>
         </div>
       </section>
 
@@ -220,65 +212,15 @@ export default function Page() {
       </section>
 
       <section id="events" className="section events">
-        <div className="section-inner">
-          <h2 className="section-title reveal">Events</h2>
-          <p className="section-text section-subtitle reveal">
-            Step into games of chance, puzzles of shadow, and stories written in neon and smoke.
-            Each event is a doorway deeper into the abyss.
-          </p>
-          <div className="events-grid">
-            {EVENTS.map((event) => (
-              <article
-                key={event.id}
-                className="event-card reveal"
-                onClick={() => setModalEvent({ title: event.title, description: event.description })}
-              >
-                <div className={`event-poster ${event.posterClass}`}>
-                  <img src={event.posterSrc} alt={event.posterAlt} className="event-poster-img" />
-                </div>
-                <div className="event-content">
-                  <h3 className="event-title">{event.title}</h3>
-                  <p className="event-tag">{event.tag}</p>
-                  <button className="btn-ghost" type="button">
-                    Learn More
-                  </button>
-                </div>
-              </article>
-            ))}
-          </div>
+        <div className="section-inner reveal">
+          <Link href="/events" className="events-nav-tab" aria-label="Open events page">
+            <span className="events-nav-tab-label">Events</span>
+            <span className="events-nav-tab-arrow" aria-hidden="true">
+              &rarr;
+            </span>
+          </Link>
         </div>
       </section>
-
-      <div
-        className={`modal-overlay${modalEvent ? " active" : ""}`}
-        id="event-modal"
-        onClick={(event) => {
-          if (event.target === event.currentTarget) {
-            setModalEvent(null);
-          }
-        }}
-      >
-        <div className="modal">
-          <button
-            className="modal-close"
-            id="modal-close"
-            aria-label="Close event details"
-            onClick={() => setModalEvent(null)}
-          >
-            &times;
-          </button>
-          <p className="modal-tag">Event</p>
-          <h3 className="modal-title" id="modal-title">
-            {modalEvent?.title ?? "Title"}
-          </h3>
-          <p className="modal-body" id="modal-body">
-            {modalEvent?.description ?? "More details will be revealed soon."}
-          </p>
-          <div className="modal-footer">
-            <span className="modal-badge">More details coming soon.</span>
-          </div>
-        </div>
-      </div>
 
       <section id="pronites" className="section pronites">
         <div className="section-inner pronites-inner reveal">
@@ -326,49 +268,41 @@ export default function Page() {
 
           <div className="schedule-grid">
             <div className={`schedule-day${activeDay === "day1" ? " active" : ""}`} id="day1">
-              <article className="schedule-card">
-                <p className="schedule-time">10:00 AM</p>
-                <h3 className="schedule-name">Opening Ceremony</h3>
-                <p className="schedule-meta">Main Arena â€¢ All Delegates</p>
-              </article>
-              <article className="schedule-card">
-                <p className="schedule-time">11:30 AM</p>
-                <h3 className="schedule-name">Treasure Hunt - Phase I</h3>
-                <p className="schedule-meta">Campus Grounds â€¢ Teams of 3-4</p>
-              </article>
-              <article className="schedule-card">
-                <p className="schedule-time">02:00 PM</p>
-                <h3 className="schedule-name">Mock CID - Case Briefing</h3>
-                <p className="schedule-meta">Black Box Room â€¢ Pre-registered Participants</p>
-              </article>
-              <article className="schedule-card">
-                <p className="schedule-time">07:00 PM</p>
-                <h3 className="schedule-name">Pronites - Night One</h3>
-                <p className="schedule-meta">Main Stage â€¢ Open Entry (Pass Holders)</p>
-              </article>
+              {SCHEDULE.day1.map((item) => {
+                const isLive =
+                  currentIstDate === SCHEDULE_DATES.day1 &&
+                  nowIstMinutes >= toMinutes(item.start) &&
+                  nowIstMinutes < toMinutes(item.end);
+                return (
+                  <article className="schedule-card" key={`day1-${item.name}-${item.start}`}>
+                    <div className="schedule-time-row">
+                      <p className="schedule-time">{item.timeLabel}</p>
+                      {isLive ? <span className="schedule-live-badge">Live</span> : null}
+                    </div>
+                    <h3 className="schedule-name">{item.name}</h3>
+                    <p className="schedule-meta">{item.meta}</p>
+                  </article>
+                );
+              })}
             </div>
 
             <div className={`schedule-day${activeDay === "day2" ? " active" : ""}`} id="day2">
-              <article className="schedule-card">
-                <p className="schedule-time">10:30 AM</p>
-                <h3 className="schedule-name">Speed Dating</h3>
-                <p className="schedule-meta">Mystic Lounge â€¢ Limited Slots</p>
-              </article>
-              <article className="schedule-card">
-                <p className="schedule-time">01:00 PM</p>
-                <h3 className="schedule-name">Treasure Hunt - Final Run</h3>
-                <p className="schedule-meta">Hidden Route â€¢ Shortlisted Teams</p>
-              </article>
-              <article className="schedule-card">
-                <p className="schedule-time">03:30 PM</p>
-                <h3 className="schedule-name">Mr & Mrs Yuvaan</h3>
-                <p className="schedule-meta">Main Stage â€¢ Live Audience Voting</p>
-              </article>
-              <article className="schedule-card">
-                <p className="schedule-time">07:30 PM</p>
-                <h3 className="schedule-name">Pronites - Finale</h3>
-                <p className="schedule-meta">Main Stage â€¢ Headline Act</p>
-              </article>
+              {SCHEDULE.day2.map((item) => {
+                const isLive =
+                  currentIstDate === SCHEDULE_DATES.day2 &&
+                  nowIstMinutes >= toMinutes(item.start) &&
+                  nowIstMinutes < toMinutes(item.end);
+                return (
+                  <article className="schedule-card" key={`day2-${item.name}-${item.start}`}>
+                    <div className="schedule-time-row">
+                      <p className="schedule-time">{item.timeLabel}</p>
+                      {isLive ? <span className="schedule-live-badge">Live</span> : null}
+                    </div>
+                    <h3 className="schedule-name">{item.name}</h3>
+                    <p className="schedule-meta">{item.meta}</p>
+                  </article>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -436,49 +370,8 @@ export default function Page() {
           </div>
         </div>
       </section>
-
-      <footer id="contact" className="footer">
-        <div className="footer-inner">
-          <div className="footer-left">
-            <h2 className="footer-title">Answer the Call.</h2>
-            <p className="footer-text">
-              For registrations, collaborations, and queries from the dark, reach out:
-            </p>
-            <a href="mailto:yuvaanfest@example.com" className="footer-email">
-              yuvaanfest@example.com
-            </a>
-          </div>
-          <div className="footer-right">
-            <p className="footer-text">Find us in the shadows:</p>
-            <div className="social-icons">
-              <a href="#" aria-label="Instagram" className="social-icon">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <rect x="3" y="3" width="18" height="18" rx="5"></rect>
-                  <circle cx="12" cy="12" r="4.5"></circle>
-                  <circle cx="17.5" cy="6.5" r="1.2"></circle>
-                </svg>
-              </a>
-              <a href="#" aria-label="Facebook" className="social-icon">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <rect x="3" y="3" width="18" height="18" rx="5"></rect>
-                  <path d="M13.2 19h-2.6v-6.1H9v-2.2h1.6V9.2c0-1.8.9-2.8 2.9-2.8h1.8v2.3h-1.1c-.8 0-1 .3-1 1v1h2.1l-.3 2.2h-1.8V19z"></path>
-                </svg>
-              </a>
-              <a href="#" aria-label="Twitter" className="social-icon">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <rect x="3" y="3" width="18" height="18" rx="5"></rect>
-                  <path d="M17.7 9.2c.4-0.3.7-0.6.9-1.1-.4.2-.8.3-1.2.4-.4-0.4-.9-0.7-1.6-0.7-1.2 0-2.1 0.9-2.1 2.1 0 .2 0 .4.1.6-1.7-0.1-3.2-0.9-4.1-2.3-.2.4-.3.7-.3 1.2 0 .8.4 1.5 1.1 1.9-.3 0-0.6-0.1-0.9-0.2 0 1.1.8 2 1.8 2.2-.2.1-.5.1-.7.1-.1 0-.3 0-.4 0 .3.9 1.2 1.5 2.2 1.5-0.8.6-1.9 0.9-3 0.9H8c1.1 0.7 2.4 1.1 3.8 1.1 4.6 0 7.1-3.8 7.1-7.1v-0.3c.3-0.2.6-0.6.8-0.9z"></path>
-                </svg>
-              </a>
-            </div>
-          </div>
-        </div>
-        <div className="footer-bottom">
-          <span>&copy; {year} YUVAAN - Whispers of the Abyss.</span>
-          <span>Crafted in the dark.</span>
-        </div>
-      </footer>
-    </>
+    </div>
   );
 }
+
 
