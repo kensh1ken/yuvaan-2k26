@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { type CSSProperties, useEffect, useState } from "react";
 
 type ScheduleDay = "day1" | "day2";
 type EventScheduleSlot = {
@@ -18,6 +18,22 @@ type EventItem = {
   coordinator: string;
   registrationUrl: string | null;
   scheduleSlots?: EventScheduleSlot[];
+};
+
+type PosterPopOutConfig = {
+  width: string;
+  bottom: string;
+  x: string;
+  scale: string;
+  hoverScale: string;
+};
+
+type PosterPopOutStyle = CSSProperties & {
+  "--poster-popout-width"?: string;
+  "--poster-popout-bottom"?: string;
+  "--poster-popout-x"?: string;
+  "--poster-popout-scale"?: string;
+  "--poster-popout-hover-scale"?: string;
 };
 
 type IstDateParts = {
@@ -66,7 +82,7 @@ const EVENT_LIST: EventItem[] = [
   {
     title: "Treasure Hunt",
     posterClass: "poster-red-gold",
-    posterSrc: "/assets/posters/treasure.png",
+    posterSrc: "/assets/posters/treasure-removebg-preview.png",
     posterAlt: "Treasure Hunt poster",
     dateTime: "Round 1 :Day 1 10:00-11:00 Round 2 :Day 2 10:00-12:00",
     coordinator: "TBD",
@@ -76,15 +92,6 @@ const EVENT_LIST: EventItem[] = [
       { day: "day1", start: "10:00", end: "11:00" },
       { day: "day2", start: "10:00", end: "12:00" },
     ],
-  },
-  {
-    title: "Talk Tangle",
-    posterClass: "poster-pink-purple",
-    posterSrc: "/assets/posters/talk%20tangle.jpeg",
-    posterAlt: "Talk Tangle poster",
-    dateTime: "TBD",
-    coordinator: "TBD",
-    registrationUrl: null,
   },
   {
     title: "Mock CID",
@@ -103,7 +110,7 @@ const EVENT_LIST: EventItem[] = [
   {
     title: "Dance Battle",
     posterClass: "poster-pink-purple",
-    posterSrc: "/assets/posters/dance%20battle.jpeg",
+    posterSrc: "/assets/posters/dance_battle-removebg-preview.png",
     posterAlt: "Dance Battle poster",
     dateTime: "Day 2 16:00-18:00",
     coordinator: "TBD",
@@ -114,7 +121,7 @@ const EVENT_LIST: EventItem[] = [
   {
     title: "Mr & Mrs Yuvaan",
     posterClass: "poster-emerald",
-    posterSrc: "/assets/posters/mrandmrs.png",
+    posterSrc: "/assets/posters/mrandmrs-removebg-preview.png",
     posterAlt: "Mr & Mrs Yuvaan poster",
     dateTime: "Day 2 18:30-20:30",
     coordinator: "TBD",
@@ -123,6 +130,37 @@ const EVENT_LIST: EventItem[] = [
     scheduleSlots: [{ day: "day2", start: "18:30", end: "20:30" }],
   },
 ];
+
+const POP_OUT_POSTER_CONFIG: Record<string, PosterPopOutConfig> = {
+  "Treasure Hunt": {
+    width: "112%",
+    bottom: "-170px",
+    x: "-52%",
+    scale: "1.24",
+    hoverScale: "1.3",
+  },
+  "Mock CID": {
+    width: "112%",
+    bottom: "-137px",
+    x: "-50%",
+    scale: "1.03",
+    hoverScale: "1.08",
+  },
+  "Dance Battle": {
+    width: "112%",
+    bottom: "-105px",
+    x: "-50%",
+    scale: "0.90",
+    hoverScale: "0.96",
+  },
+  "Mr & Mrs Yuvaan": {
+    width: "112%",
+    bottom: "-120px",
+    x: "-50%",
+    scale: "1.00",
+    hoverScale: "1.04",
+  },
+};
 
 export default function EventsPage() {
   const [nowTimestamp, setNowTimestamp] = useState(() => Date.now());
@@ -160,11 +198,22 @@ export default function EventsPage() {
         <div className="events-grid">
           {EVENT_LIST.map((event) => {
             const isLive = isEventLive(event);
+            const popOutConfig = POP_OUT_POSTER_CONFIG[event.title];
+            const popOutStyle: PosterPopOutStyle | undefined = popOutConfig
+              ? {
+                  "--poster-popout-width": popOutConfig.width,
+                  "--poster-popout-bottom": popOutConfig.bottom,
+                  "--poster-popout-x": popOutConfig.x,
+                  "--poster-popout-scale": popOutConfig.scale,
+                  "--poster-popout-hover-scale": popOutConfig.hoverScale,
+                }
+              : undefined;
 
             return (
               <article key={event.title} className="event-card">
                 <div
-                  className={`event-poster ${event.posterClass}${event.title === "Mock CID" ? " poster-popout" : ""}`}
+                  className={`event-poster ${event.posterClass}${popOutConfig ? " poster-popout" : ""}`}
+                  style={popOutStyle}
                 >
                   <img src={event.posterSrc} alt={event.posterAlt} className="event-poster-img" />
                 </div>

@@ -211,7 +211,7 @@ export default function Page() {
         </div>
       </section>
 
-      <section id="events" className="section events">
+      <section id="events" className="section events home-events">
         <div className="section-inner reveal">
           <Link href="/events" className="events-nav-tab" aria-label="Open events page">
             <span className="events-nav-tab-label">Events</span>
@@ -247,12 +247,17 @@ export default function Page() {
           <p className="section-subtitle reveal">
             Two days. Parallel dimensions of chaos, creativity, and controlled madness.
           </p>
-          <div className="schedule-tabs reveal">
+          <div
+            className="schedule-tabs reveal"
+            data-active-index={activeDay === "day1" ? "0" : "1"}
+          >
+            <span className="schedule-tab-indicator" aria-hidden="true"></span>
             <button
               className={`schedule-tab${activeDay === "day1" ? " active" : ""}`}
               data-day="day1"
               type="button"
               onClick={() => setActiveDay("day1")}
+              aria-pressed={activeDay === "day1"}
             >
               Day 1
             </button>
@@ -261,6 +266,7 @@ export default function Page() {
               data-day="day2"
               type="button"
               onClick={() => setActiveDay("day2")}
+              aria-pressed={activeDay === "day2"}
             >
               Day 2
             </button>
@@ -373,5 +379,3 @@ export default function Page() {
     </div>
   );
 }
-
-
