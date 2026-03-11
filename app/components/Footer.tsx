@@ -9,8 +9,8 @@ export default function Footer() {
           <p className="footer-text">
             For registrations, collaborations, and queries from the dark, reach out:
           </p>
-          <a href="mailto:yuvaanfest@iiitg.ac.in" className="footer-email">
-            yuvaanfest@iiitg.ac.in
+          <a href="mailto:yuvaan@iiitg.ac.in" className="footer-email">
+            yuvaan@iiitg.ac.in
           </a>
         </div>
         <div className="footer-right">

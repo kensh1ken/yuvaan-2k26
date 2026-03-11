@@ -171,7 +171,7 @@ h6 {
 }
 
 .page-home .schedule-time {
-  font-size: 0.95rem;
+  font-size: 1.9rem;
 }
 
 .page-home .schedule-live-badge {
@@ -974,10 +974,14 @@ h6 {
 }
 
 .schedule-time {
-  font-size: 0.78rem;
+  font-size: 1.56rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #bdbdbd;
+  color: #8b0000;
+  text-shadow:
+    0 0 3px rgba(30, 0, 0, 0.95),
+    0 0 10px rgba(139, 0, 0, 0.85),
+    0 0 18px rgba(255, 0, 0, 0.65);
   margin-bottom: 0.35rem;
 }
 
