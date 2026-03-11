@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import GhostCursor from "./components/GhostCursor";
+import ElectricBorder from "@/components/ElectricBorder";
 
 type ScheduleDay = "day1" | "day2";
 type ScheduleItem = {
@@ -107,7 +108,7 @@ const SCHEDULE_DATES: Record<ScheduleDay, string> = {
   day1: "2026-03-14",
   day2: "2026-03-15",
 };
-const MERCH_TAB_HREF = "#";
+const MERCH_TAB_HREF = "";
 
 const IST_DATE_TIME_FORMATTER = new Intl.DateTimeFormat("en-CA", {
   timeZone: "Asia/Kolkata",
@@ -199,36 +200,46 @@ export default function Page() {
       </section>
 
       <section id="merch" className="section merch home-merch">
-        <div className="section-inner reveal">
-          <a
-            href={MERCH_TAB_HREF}
-            className="events-nav-tab merch-nav-tab"
-            aria-label="Open merch link"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <span className="events-nav-tab-label">🛒Buy-Explore the Phantom Market</span>
-            <span className="events-nav-tab-arrow" aria-hidden="true">
-              &rarr;
-            </span>
-          </a>
-          <div className="merch-grid">
-            <article className="merch-card">
-              <img
-                src="/assets/merch/Gemini_Generated_Image_82t1nh82t1nh82t1.png"
-                alt="YUVAAN merch concept art"
-                className="merch-image"
-              />
-            </article>
-            <article className="merch-card">
-              <img
-                src="/assets/merch/WhatsApp%20Image%202026-02-09%20at%208.32.56%20PM.jpeg"
-                alt="YUVAAN merch sample photo"
-                className="merch-image"
-              />
-            </article>
+        <ElectricBorder
+          color="#7df9ff"
+          speed={1}
+          chaos={0.12}
+          thickness={2}
+          borderRadius={16}
+          className="merch-electric-wrap reveal"
+          style={{ borderRadius: 16 }}
+        >
+          <div className="section-inner">
+            <a
+              href={MERCH_TAB_HREF}
+              className="events-nav-tab merch-nav-tab"
+              aria-label="Open merch link"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span className="events-nav-tab-label merch-tab-label">🛒Buy-Explore the Phantom Market</span>
+              <span className="events-nav-tab-arrow" aria-hidden="true">
+                &rarr;
+              </span>
+            </a>
+            <div className="merch-grid">
+              <article className="merch-card">
+                <img
+                  src="/assets/merch/Gemini_Generated_Image_82t1nh82t1nh82t1.png"
+                  alt="YUVAAN merch concept art"
+                  className="merch-image"
+                />
+              </article>
+              <article className="merch-card">
+                <img
+                  src="/assets/merch/WhatsApp%20Image%202026-02-09%20at%208.32.56%20PM.jpeg"
+                  alt="YUVAAN merch sample photo"
+                  className="merch-image"
+                />
+              </article>
+            </div>
           </div>
-        </div>
+        </ElectricBorder>
       </section>
 
       <section id="events" className="section events home-events">
@@ -399,3 +410,4 @@ export default function Page() {
     </div>
   );
 }
+

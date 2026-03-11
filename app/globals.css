@@ -479,8 +479,17 @@ h6 {
   padding-bottom: 2rem;
 }
 
+.merch-electric-wrap {
+  width: min(100%, 1100px);
+  margin: 0 auto;
+}
+
 .merch-nav-tab {
   margin-bottom: 1rem;
+}
+
+.merch-tab-label {
+  color: #7df9ff;
 }
 
 .merch-grid {
@@ -518,6 +527,33 @@ h6 {
 .home-events .section-inner {
   padding-top: 0.8rem;
   padding-bottom: 0.8rem;
+}
+
+/* Events page text size boost */
+.events-page .section-title {
+  font-size: clamp(2.5rem, 3.6vw, 3.2rem);
+}
+
+.events-page .section-subtitle,
+.events-page .section-text {
+  font-size: clamp(1.12rem, 1.35vw, 1.3rem);
+}
+
+.events-page .event-title {
+  font-size: clamp(1.2rem, 1.5vw, 1.42rem);
+}
+
+.events-page .event-detail {
+  font-size: clamp(0.98rem, 1.1vw, 1.08rem);
+  line-height: 1.55;
+}
+
+.events-page .event-register-btn {
+  font-size: 0.92rem;
+}
+
+.events-page .schedule-live-badge {
+  font-size: 0.74rem;
 }
 
 .events-nav-tab {

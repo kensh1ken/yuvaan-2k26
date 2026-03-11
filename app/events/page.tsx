@@ -188,7 +188,7 @@ export default function EventsPage() {
     );
 
   return (
-    <section id="events" className="section events">
+    <section id="events" className="section events events-page">
       <div className="section-inner">
         <h2 className="section-title">Events</h2>
         <p className="section-text section-subtitle">
