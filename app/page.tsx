@@ -108,7 +108,7 @@ const SCHEDULE_DATES: Record<ScheduleDay, string> = {
   day1: "2026-03-14",
   day2: "2026-03-15",
 };
-const MERCH_TAB_HREF = "";
+const MERCH_TAB_HREF = "https://merch.yuvaan.org.in";
 
 const IST_DATE_TIME_FORMATTER = new Intl.DateTimeFormat("en-CA", {
   timeZone: "Asia/Kolkata",
@@ -217,7 +217,7 @@ export default function Page() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <span className="events-nav-tab-label merch-tab-label">🛒Buy-Explore the Phantom Market</span>
+              <span className="events-nav-tab-label merch-tab-label" color="#7df9ff">🛒Buy-Explore the Phantom Market</span>
               <span className="events-nav-tab-arrow" aria-hidden="true">
                 &rarr;
               </span>
@@ -232,7 +232,7 @@ export default function Page() {
               </article>
               <article className="merch-card">
                 <img
-                  src="/assets/merch/WhatsApp%20Image%202026-02-09%20at%208.32.56%20PM.jpeg"
+                  src="/assets/merch/merchComing.jpeg"
                   alt="YUVAAN merch sample photo"
                   className="merch-image"
                 />

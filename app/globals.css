@@ -723,6 +723,7 @@ h6 {
   font-size: 1.05rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  font-family: "Passero One", sans-serif;
 }
 
 .event-title-row {
@@ -741,6 +742,15 @@ h6 {
   font-size: 0.84rem;
   color: #e0e0e0;
   line-height: 1.45;
+}
+
+.event-detail-label {
+  display: block;
+}
+
+.event-detail-value {
+  display: block;
+  white-space: pre-line;
 }
 
 .event-register-btn {
@@ -1271,6 +1281,10 @@ h6 {
 
   .events-grid {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .event-poster.poster-popout .event-poster-img {
+    bottom: calc(var(--poster-popout-bottom, -30px) + 20px);
   }
 
   .merch-grid {

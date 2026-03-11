@@ -223,7 +223,8 @@ export default function EventsPage() {
                     {isLive ? <span className="schedule-live-badge">Live</span> : null}
                   </div>
                   <p className="event-detail">
-                    <strong>Date & Time:</strong> {event.dateTime}
+                    <strong className="event-detail-label">Day and Date:</strong>
+                    <span className="event-detail-value">{event.dateTime}</span>
                   </p>
                   <p className="event-detail">
                     <strong>Coordinator:</strong> {event.coordinator}
