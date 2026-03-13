@@ -97,6 +97,22 @@ h6 {
   z-index: 1;
 }
 
+.page-home::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(0, 0, 0, 0) 24%,
+      rgba(0, 0, 0, 0.28) 46%,
+      rgba(0, 0, 0, 0.68) 72%,
+      rgba(0, 0, 0, 0.92) 100%
+    );
+}
+
 .page-home .section:not(.hero) {
   overflow: hidden;
 }
@@ -387,7 +403,7 @@ h6 {
 
 /* ==== HERO ==== */
 .hero {
-  min-height: 100vh;
+  min-height: calc(100vh - 30px);
   display: grid;
   place-items: center;
   padding-top: 5.5rem;
