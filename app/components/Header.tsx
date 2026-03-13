@@ -18,11 +18,14 @@ export default function Header() {
           <Link href="/" className="nav-link" onClick={closeNav}>
             Home
           </Link>
-          <Link href="/#about" className="nav-link" onClick={closeNav}>
-            About
-          </Link>
-          <Link href="/events" className="nav-link" onClick={closeNav}>
+          <a href="https://iiitgmun.org.in" target="_blank" rel="noopener noreferrer" className="nav-link">
+            MUN
+          </a>
+          <Link href="/#events" className="nav-link" onClick={closeNav}>
             Events
+          </Link>
+          <Link href="/#merch" className="nav-link" onClick={closeNav}>
+            Merch
           </Link>
           <Link href="/#schedule" className="nav-link" onClick={closeNav}>
             Schedule
@@ -33,9 +36,6 @@ export default function Header() {
           <Link href="/#sponsors" className="nav-link" onClick={closeNav}>
             Sponsors
           </Link>
-          <a href="https://iiitgmun.org.in" target="_blank" rel="noopener noreferrer" className="nav-link">
-            MUN
-          </a>
           <Link href="/#contact" className="nav-link" onClick={closeNav}>
             Contact
           </Link>

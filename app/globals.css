@@ -436,6 +436,19 @@ h6 {
   filter: none;
 }
 
+.hero-tagline {
+  margin-top: -0.2rem;
+  margin-bottom: 0.8rem;
+  font-size: clamp(1.7rem, 3.4vw, 2.6rem);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #861414;
+  text-shadow:
+    0 0 3px rgba(35, 0, 0, 0.85),
+    0 0 12px rgba(255, 77, 77, 0.75),
+    0 0 22px rgba(255, 120, 120, 0.58);
+}
+
 .hero-logo-text {
   position: absolute;
   display: flex;
@@ -520,39 +533,34 @@ h6 {
 }
 
 .home-events {
-  padding-top: 1rem;
-  padding-bottom: 1rem;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
 }
 
-.home-events .section-inner {
-  padding-top: 0.8rem;
-  padding-bottom: 0.8rem;
-}
-
-/* Events page text size boost */
-.events-page .section-title {
+/* Events section text size boost */
+.events .section-title {
   font-size: clamp(2.5rem, 3.6vw, 3.2rem);
 }
 
-.events-page .section-subtitle,
-.events-page .section-text {
+.events .section-subtitle,
+.events .section-text {
   font-size: clamp(1.12rem, 1.35vw, 1.3rem);
 }
 
-.events-page .event-title {
+.events .event-title {
   font-size: clamp(1.2rem, 1.5vw, 1.42rem);
 }
 
-.events-page .event-detail {
+.events .event-detail {
   font-size: clamp(0.98rem, 1.1vw, 1.08rem);
   line-height: 1.55;
 }
 
-.events-page .event-register-btn {
+.events .event-register-btn {
   font-size: 0.92rem;
 }
 
-.events-page .schedule-live-badge {
+.events .schedule-live-badge {
   font-size: 0.74rem;
 }
 
@@ -596,9 +604,16 @@ h6 {
 
 .events-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-auto-flow: column;
+  grid-auto-columns: calc((100% - 3.6rem) / 3);
   gap: 1.8rem;
   margin-top: 2.5rem;
+  overflow-x: auto;
+  overflow-y: visible;
+  scroll-snap-type: x proximity;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.4) transparent;
+  padding-bottom: 0.6rem;
 }
 
 .event-card {
@@ -615,6 +630,7 @@ h6 {
   gap: 0.9rem;
   position: relative;
   isolation: isolate;
+  scroll-snap-align: start;
   transition:
     transform 0.25s ease,
     box-shadow 0.25s ease,
@@ -1237,7 +1253,7 @@ h6 {
 /* ==== RESPONSIVE ==== */
 @media (max-width: 960px) {
   .events-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-columns: calc((100% - 1.8rem) / 2);
   }
 
   .pronites-inner {
@@ -1284,7 +1300,7 @@ h6 {
   }
 
   .events-grid {
-    grid-template-columns: minmax(0, 1fr);
+    grid-auto-columns: minmax(85%, 1fr);
   }
 
   .event-poster.poster-popout .event-poster-img {

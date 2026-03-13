@@ -1,7 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { useEffect, useState } from "react";
+import { type CSSProperties, useEffect, useState } from "react";
 import GhostCursor from "./components/GhostCursor";
 import ElectricBorder from "@/components/ElectricBorder";
 
@@ -12,6 +11,35 @@ type ScheduleItem = {
   end: string;
   name: string;
   meta: string;
+};
+type EventScheduleSlot = {
+  day: ScheduleDay;
+  start: string;
+  end: string;
+};
+type EventItem = {
+  title: string;
+  posterClass: string;
+  posterSrc: string;
+  posterAlt: string;
+  dateTime: string;
+  coordinator: string;
+  registrationUrl: string | null;
+  scheduleSlots?: EventScheduleSlot[];
+};
+type PosterPopOutConfig = {
+  width: string;
+  bottom: string;
+  x: string;
+  scale: string;
+  hoverScale: string;
+};
+type PosterPopOutStyle = CSSProperties & {
+  "--poster-popout-width"?: string;
+  "--poster-popout-bottom"?: string;
+  "--poster-popout-x"?: string;
+  "--poster-popout-scale"?: string;
+  "--poster-popout-hover-scale"?: string;
 };
 type IstDateParts = {
   year: number;
@@ -109,6 +137,88 @@ const SCHEDULE_DATES: Record<ScheduleDay, string> = {
   day2: "2026-03-15",
 };
 const MERCH_TAB_HREF = "https://merch.yuvaan.org.in";
+const EVENT_LIST: EventItem[] = [
+  {
+    title: "Treasure Hunt",
+    posterClass: "poster-red-gold",
+    posterSrc: "/assets/posters/treasure-removebg-preview.png",
+    posterAlt: "Treasure Hunt poster",
+    dateTime: "Round 1 :Day 1 10:00-11:00 Round 2 :Day 2 10:00-12:00",
+    coordinator: "TBD",
+    registrationUrl:
+      "https://unstop.com/events/yuvaan26-treasure-hunt-the-upside-down-edition-yuvaan26-indian-institute-of-information-technology-iiit-guwahati-1652819",
+    scheduleSlots: [
+      { day: "day1", start: "10:00", end: "11:00" },
+      { day: "day2", start: "10:00", end: "12:00" },
+    ],
+  },
+  {
+    title: "Mock CID",
+    posterClass: "poster-noir",
+    posterSrc: "/assets/posters/mockcid-removebg-preview.png",
+    posterAlt: "Mock CID poster",
+    dateTime: "\nRound 1 :Day 1 13:30-16:00\n Round 2 :Day 2 14:30-15:30",
+    coordinator: "TBD",
+    registrationUrl:
+      "https://unstop.com/events/mock-cid-indian-institute-of-information-technology-iiit-guwahati-1642345",
+    scheduleSlots: [
+      { day: "day1", start: "13:30", end: "16:00" },
+      { day: "day2", start: "14:30", end: "15:30" },
+    ],
+  },
+  {
+    title: "Dance Battle",
+    posterClass: "poster-pink-purple",
+    posterSrc: "/assets/posters/dance_battle-removebg-preview.png",
+    posterAlt: "Dance Battle poster",
+    dateTime: "Day 2 16:00-18:00",
+    coordinator: "TBD",
+    registrationUrl:
+      "https://unstop.com/events/dance-battle-indian-institute-of-information-technology-iiit-guwahati-1651082",
+    scheduleSlots: [{ day: "day2", start: "16:00", end: "18:00" }],
+  },
+  {
+    title: "Ms & Mr Yuvaan",
+    posterClass: "poster-emerald",
+    posterSrc: "/assets/posters/mrandmrs-removebg-preview.png",
+    posterAlt: "Ms & Mr Yuvaan poster",
+    dateTime: "Day 2 18:30-20:30",
+    coordinator: "TBD",
+    registrationUrl:
+      "https://unstop.com/events/ms-mr-yuvaan-yuvaan26-indian-institute-of-information-technology-iiit-guwahati-1650727",
+    scheduleSlots: [{ day: "day2", start: "18:30", end: "20:30" }],
+  },
+];
+const POP_OUT_POSTER_CONFIG: Record<string, PosterPopOutConfig> = {
+  "Treasure Hunt": {
+    width: "112%",
+    bottom: "-170px",
+    x: "-52%",
+    scale: "1.24",
+    hoverScale: "1.3",
+  },
+  "Mock CID": {
+    width: "112%",
+    bottom: "-137px",
+    x: "-50%",
+    scale: "1.03",
+    hoverScale: "1.08",
+  },
+  "Dance Battle": {
+    width: "112%",
+    bottom: "-105px",
+    x: "-50%",
+    scale: "0.90",
+    hoverScale: "0.96",
+  },
+  "Ms & Mr Yuvaan": {
+    width: "112%",
+    bottom: "-120px",
+    x: "-50%",
+    scale: "1.00",
+    hoverScale: "1.04",
+  },
+};
 
 const IST_DATE_TIME_FORMATTER = new Intl.DateTimeFormat("en-CA", {
   timeZone: "Asia/Kolkata",
@@ -176,6 +286,13 @@ export default function Page() {
     istNow.day,
   ).padStart(2, "0")}`;
   const nowIstMinutes = istNow.hour * 60 + istNow.minute;
+  const isEventLive = (event: EventItem) =>
+    (event.scheduleSlots ?? []).some(
+      (slot) =>
+        currentIstDate === SCHEDULE_DATES[slot.day] &&
+        nowIstMinutes >= toMinutes(slot.start) &&
+        nowIstMinutes < toMinutes(slot.end),
+    );
 
   return (
     <div className="page-home">
@@ -195,7 +312,72 @@ export default function Page() {
               className="hero-logo-image"
             />
           </div>
+          <p className="hero-tagline passero-one-regular">This March,</p>
+          <p className="hero-tagline passero-one-regular">14th and 15th</p>
           <div className="hero-dates-slot" aria-hidden="true"></div>
+        </div>
+      </section>
+
+      <section id="events" className="section events home-events">
+        <div className="section-inner reveal">
+          <h2 className="section-title">Events</h2>
+          <p className="section-text section-subtitle">
+            Step into games of chance, puzzles of shadow, and stories written in neon and smoke.
+            Each event is a doorway deeper into the abyss.
+          </p>
+          <div className="events-grid">
+            {EVENT_LIST.map((event) => {
+              const isLive = isEventLive(event);
+              const popOutConfig = POP_OUT_POSTER_CONFIG[event.title];
+              const popOutStyle: PosterPopOutStyle | undefined = popOutConfig
+                ? {
+                    "--poster-popout-width": popOutConfig.width,
+                    "--poster-popout-bottom": popOutConfig.bottom,
+                    "--poster-popout-x": popOutConfig.x,
+                    "--poster-popout-scale": popOutConfig.scale,
+                    "--poster-popout-hover-scale": popOutConfig.hoverScale,
+                  }
+                : undefined;
+
+              return (
+                <article key={event.title} className="event-card">
+                  <div
+                    className={`event-poster ${event.posterClass}${popOutConfig ? " poster-popout" : ""}`}
+                    style={popOutStyle}
+                  >
+                    <img src={event.posterSrc} alt={event.posterAlt} className="event-poster-img" />
+                  </div>
+                  <div className="event-content">
+                    <div className="event-title-row">
+                      <h3 className="event-title">{event.title}</h3>
+                      {isLive ? <span className="schedule-live-badge">Live</span> : null}
+                    </div>
+                    <p className="event-detail">
+                      <strong className="event-detail-label">Day and Date:</strong>
+                      <span className="event-detail-value">{event.dateTime}</span>
+                    </p>
+                    <p className="event-detail">
+                      <strong>Coordinator:</strong> {event.coordinator}
+                    </p>
+                    {event.registrationUrl ? (
+                      <a
+                        href={event.registrationUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn-primary event-register-btn"
+                      >
+                        Register
+                      </a>
+                    ) : (
+                      <span className="btn-ghost event-register-btn event-register-disabled">
+                        Registration Soon
+                      </span>
+                    )}
+                  </div>
+                </article>
+              );
+            })}
+          </div>
         </div>
       </section>
 
@@ -240,36 +422,6 @@ export default function Page() {
             </div>
           </div>
         </ElectricBorder>
-      </section>
-
-      <section id="events" className="section events home-events">
-        <div className="section-inner reveal">
-          <Link href="/events" className="events-nav-tab" aria-label="Open events page">
-            <span className="events-nav-tab-label">Events</span>
-            <span className="events-nav-tab-arrow" aria-hidden="true">
-              &rarr;
-            </span>
-          </Link>
-        </div>
-      </section>
-
-      <section id="pronites" className="section pronites">
-        <div className="section-inner pronites-inner reveal">
-          <div className="pronites-spotlight"></div>
-          <div className="pronites-content">
-            <h2 className="section-title">Night falls. The stage awakens.</h2>
-            <p className="section-text">
-              As darkness settles, the heart of YUVAAN begins to pulse. Under a wash of crimson and
-              abyssal purple, the main stage turns into a portal: live artists, surprise acts, and
-              performances that feel less like shows and more like shared hallucinations. This is
-              where the carnival roars to life, where the crowd becomes a single, electric
-              silhouette against the light.
-            </p>
-            <p className="section-text">
-              Stay tuned for the artist lineup - the night has secrets it has not yet revealed.
-            </p>
-          </div>
-        </div>
       </section>
 
       <section id="schedule" className="section schedule">
@@ -410,4 +562,3 @@ export default function Page() {
     </div>
   );
 }
-

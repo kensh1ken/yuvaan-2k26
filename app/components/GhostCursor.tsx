@@ -87,6 +87,24 @@ function GhostEntity() {
 
 export default function GhostCursor() {
   const [isWebGLAvailable, setIsWebGLAvailable] = useState<boolean | null>(null);
+  const [isDesktopViewport, setIsDesktopViewport] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia(
+      "(min-width: 961px) and (hover: hover) and (pointer: fine)",
+    );
+
+    const updateViewport = () => {
+      setIsDesktopViewport(mediaQuery.matches);
+    };
+
+    updateViewport();
+    mediaQuery.addEventListener("change", updateViewport);
+
+    return () => {
+      mediaQuery.removeEventListener("change", updateViewport);
+    };
+  }, []);
 
   useEffect(() => {
     try {
@@ -102,7 +120,7 @@ export default function GhostCursor() {
     }
   }, []);
 
-  if (isWebGLAvailable !== true) {
+  if (isDesktopViewport !== true || isWebGLAvailable !== true) {
     return <div aria-hidden="true" style={{ width: "100%", height: "100%" }} />;
   }
 
